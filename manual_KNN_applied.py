@@ -21,8 +21,9 @@ def k_nearest_neighbors(data, predict, k=3):
     
     votes = [i[1] for i in sorted(distances)[:k]] #take k closest elements
     vote_result = Counter(votes).most_common(1)[0][0] #find the most commonly occuring class
+    confidence = Counter(votes).most_common(1)[0][1] / k #calculate confidence based on k
 
-    return vote_result
+    return vote_result, confidence
 
 df = pd.read_csv('breast-cancer-wisconsin.data') #read data
 df.replace('?', -99999, inplace=True) #replace missing data as outliers
@@ -51,9 +52,9 @@ total = 0
 
 for group in test_set: #call the function for each set in test_set, using the data as the prediction value
     for data in test_set[group]:
-        vote = k_nearest_neighbors(train_set, data, k=5) #train_set is used as the data to classify the values from test_set
+        vote, confidence = k_nearest_neighbors(train_set, data, k=5) #train_set is used as the data to classify the values from test_set
         if group == vote:
             correct += 1 #store for accuracy calculation
         total += 1
 
-print('Accuracy: ', correct/total) 
+print('Accuracy: ', correct/total)
