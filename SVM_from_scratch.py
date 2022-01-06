@@ -34,6 +34,7 @@ class Support_Vector_Machine:
         #support vectors yi*(xi.w + b) = 1 when optimized
         #not as important for b to be very precise for the amount of computation required
         b_range_multiple = 5
+        b_multiple = 2
 
         latest_optimum = self.max_feature_value * 10
 
@@ -44,7 +45,7 @@ class Support_Vector_Machine:
             optimized = False
             while not optimized:
                 #np.arange() gives the ability to set start and stop points and step sizes
-                for b in np.arange(-1 * (self.max_feature_value * b_range_multiple), self.max_feature_value * b_range_multiple, step * b_range_multiple):
+                for b in np.arange(-1 * (self.max_feature_value * b_range_multiple), self.max_feature_value * b_range_multiple, step * b_multiple):
                     for transformation in transforms:
                         w_t = w * transformation #multiply w_t by each transform
                         found_option = True
@@ -53,7 +54,7 @@ class Support_Vector_Machine:
                                 yi = i
                                 if not yi * (np.dot(w_t, xi) + b) >= 1:
                                     found_option = False
-                                    #break
+                                    break
                         
                         if found_option:
                             opt_dict[np.linalg.norm(w_t)] = [w_t,b]
@@ -112,4 +113,10 @@ data_dict = {-1:np.array([[1,7], [2,8], [3,8]]), 1:np.array([[5,1], [6,-1], [7,3
 
 svm = Support_Vector_Machine()
 svm.fit(data=data_dict)
+
+#datapoints to classify
+predict_us = [[0,10], [1,3], [3,4], [3,5], [5,5], [5,6], [6,-5], [5,8]]
+for p in predict_us:
+    svm.predict(p)
+
 svm.visualize()
